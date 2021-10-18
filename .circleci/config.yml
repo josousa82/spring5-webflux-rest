@@ -18,12 +18,13 @@ jobs:
        keys:
        - v1-dependencies-{{ checksum "build.gradle"}}
        - v1-dependencies
+
    - run: gradle dependencies
 
 #   - run: mvn dependency:go-offline
 
    - save-cache:
-         paths:
-         - ~/.gradle
-         key: v1-dependencies-{{ checksum "build.gradle"}}
+       paths:
+       - ~/.gradle
+       key: v1-dependencies-{{ checksum "build.gradle"}}
    - run: gradle-test
