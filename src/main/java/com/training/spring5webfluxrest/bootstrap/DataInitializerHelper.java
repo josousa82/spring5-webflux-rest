@@ -6,28 +6,34 @@ import com.training.spring5webfluxrest.domain.Vendor;
 public class DataInitializerHelper {
     // CONSTANTS
 
+    public static final String ID_1 = "617097";
+    public static final String CATEGORY_STR_1 = "category_1";
+
+
     public static final String CATEGORY_API_URL = "/api/v1/categories/";
     public static final String CUSTOMERS_API_URL = "/api/v1/customers/";
     public static final String VENDORS_API_URL = "/api/v1/vendors/";
 
 //    INITIALIZE CATEGORIES DATA
 
-    public static final Category FRUITS = Category.builder()
-            .description("Fruits")
+
+
+    public static final Category CATEGORY_1 = Category.builder()
+            .description(CATEGORY_STR_1)
             .build();
 
-    public static final Category DRIED = Category.builder()
-            .description("Dried")
+    public static final Category CATEGORY_2 = Category.builder()
+            .description("category_2")
             .build();
 
-    public static final Category EXOTIC = Category.builder()
-            .description("Exotic")
+    public static final Category CATEGORY_3 = Category.builder()
+            .description("category_3")
             .build();
-    public static final Category NUTS = Category.builder()
-            .description("Nuts")
+    public static final Category CATEGORY_4 = Category.builder()
+            .description("category_4")
             .build();
-    public static final Category FRESH = Category.builder()
-            .description("fresh")
+    public static final Category CATEGORY_5 = Category.builder()
+            .description("category_5")
             .build();
 
 //    public static final CategoryDTO FRUITS_DTO = CategoryDTO.builder()

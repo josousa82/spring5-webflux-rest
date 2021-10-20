@@ -3,12 +3,8 @@ package com.training.spring5webfluxrest.bootstrap;
 import com.training.spring5webfluxrest.repositories.CategoryRepository;
 import com.training.spring5webfluxrest.repositories.VendorRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 import static com.training.spring5webfluxrest.bootstrap.DataInitializerHelper.*;
 
@@ -29,11 +25,11 @@ public class Bootstrap implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         if(categoryRepository.count().block() == 0){
-            categoryRepository.save(FRUITS).block();
-            categoryRepository.save(DRIED).block();
-            categoryRepository.save(EXOTIC).block();
-            categoryRepository.save(NUTS).block();
-            categoryRepository.save(FRESH).block();
+            categoryRepository.save(CATEGORY_1).block();
+            categoryRepository.save(CATEGORY_2).block();
+            categoryRepository.save(CATEGORY_3).block();
+            categoryRepository.save(CATEGORY_4).block();
+            categoryRepository.save(CATEGORY_5).block();
             log.info("{} categories loaded.", categoryRepository.count().block());
         }
 
