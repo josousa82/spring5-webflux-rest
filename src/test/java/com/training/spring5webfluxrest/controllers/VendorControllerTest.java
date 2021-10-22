@@ -7,8 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -66,5 +67,20 @@ class VendorControllerTest {
                     assertEquals(VENDOR_1.getFirstName(), vendor.getFirstName());
                     assertEquals(VENDOR_1.getLastName(), vendor.getLastName());
                 });
+    }
+
+    @Test
+    void createVendor() {
+        BDDMockito.given(vendorRepository.saveAll(Mockito.any(Publisher.class)))
+                .willReturn(Flux.just(VENDOR_1));
+
+        Mono<Vendor> vendorMono = Mono.just(VENDOR_1);
+
+        webTestClient.post()
+                .uri(VENDORS_API_URL)
+                .body(vendorMono, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
     }
 }

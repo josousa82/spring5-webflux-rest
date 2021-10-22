@@ -18,8 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.training.spring5webfluxrest.bootstrap.DataInitializerHelper.*;
-import static org.hamcrest.Matchers.any;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = {CategoryController.class})
@@ -69,7 +68,7 @@ class CategoryControllerTest {
                 .getResponseBody();
         assert result != null;
         assertEquals(ID_1, result.getId());
-        assertEquals( CATEGORY_STR_1,result.getDescription());
+        assertEquals(CATEGORY_STR_1, result.getDescription());
     }
 
     @Test
@@ -77,7 +76,7 @@ class CategoryControllerTest {
         BDDMockito.given(categoryRepository.saveAll(Mockito.any(Publisher.class)))
                 .willReturn(Flux.just(CATEGORY_1));
 
-        Mono<Category> categoryMono =Mono.just(CATEGORY_1);
+        Mono<Category> categoryMono = Mono.just(CATEGORY_1);
 
         webTestClient.post()
                 .uri(CATEGORY_API_URL)
@@ -85,5 +84,29 @@ class CategoryControllerTest {
                 .exchange()
                 .expectStatus()
                 .isCreated();
+    }
+
+    @Test
+    void updateCategory() {
+
+        CATEGORY_1.setId(ID_1);
+        CATEGORY_1.setDescription("Updated category 1");
+
+        BDDMockito.given(categoryRepository.save(Mockito.any(Category.class)))
+                .willReturn(Mono.just(CATEGORY_1));
+
+        var catToUpdateMono = Mono.just(Category
+                .builder()
+                .description("Updated category 1")
+                .build());
+
+        webTestClient.put()
+                .uri(CATEGORY_API_URL + ID_1)
+                .body(catToUpdateMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Category.class)
+                .value(category -> assertEquals("Updated category 1", category.getDescription()));
     }
 }
