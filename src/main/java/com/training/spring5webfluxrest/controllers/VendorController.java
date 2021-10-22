@@ -42,6 +42,7 @@ public class VendorController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(VENDORS_API_URL + "/{id}")
     public Mono<Vendor> updateVendor(@PathVariable String id, @RequestBody Vendor vendor){
+        vendor.setId(id);
         return vendorRepository.save(vendor);
     }
 

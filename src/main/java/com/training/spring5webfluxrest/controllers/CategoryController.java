@@ -42,8 +42,9 @@ public class CategoryController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(CATEGORIES_API_URL + "/{id}")
-    public Mono<Category> updateCategory(@PathVariable String id, @RequestBody Category categoryStream){
-        return categoryRepository.save(categoryStream);
+    public Mono<Category> updateCategory(@PathVariable String id, @RequestBody Category category){
+        category.setId(id);
+        return categoryRepository.save(category);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -54,10 +55,11 @@ public class CategoryController {
         //TODO fix method, move logic to service, wrap in try catch, deal with null exceptions
 
         if (categoryFound != null) {
-            if(categoryFound.getDescription().equals(category.getDescription())) {
+            if(!categoryFound.getDescription().equals(category.getDescription())) {
                 categoryFound.setDescription(category.getDescription());
+                return categoryRepository.save(categoryFound);
             }
-            return categoryRepository.save(categoryFound);
+
         }
 
         return Mono.just(categoryFound);

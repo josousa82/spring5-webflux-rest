@@ -110,7 +110,7 @@ class VendorControllerTest {
     }
 
     @Test
-    void patchVendorTest() {
+    void patchVendorTestWithChanges() {
 
         VENDOR_3.setId(ID_1);
 
