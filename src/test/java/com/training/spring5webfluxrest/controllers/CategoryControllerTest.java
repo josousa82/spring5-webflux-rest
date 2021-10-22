@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.training.spring5webfluxrest.bootstrap.DataInitializerHelper.*;
+import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -67,5 +70,20 @@ class CategoryControllerTest {
         assert result != null;
         assertEquals(ID_1, result.getId());
         assertEquals( CATEGORY_STR_1,result.getDescription());
+    }
+
+    @Test
+    void createCategory() {
+        BDDMockito.given(categoryRepository.saveAll(Mockito.any(Publisher.class)))
+                .willReturn(Flux.just(CATEGORY_1));
+
+        Mono<Category> categoryMono =Mono.just(CATEGORY_1);
+
+        webTestClient.post()
+                .uri(CATEGORY_API_URL)
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
     }
 }
