@@ -42,7 +42,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void getCategories() {
+    void getCategoriesTest() {
 
         BDDMockito.given(categoryRepository.findAll())
                 .willReturn(Flux.just(CATEGORY_1, CATEGORY_2));
@@ -54,7 +54,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void getCategoryById() {
+    void getCategoryByIdTest() {
 
         CATEGORY_1.setId(ID_1);
         BDDMockito.given(categoryRepository.findById(ID_1))
@@ -72,7 +72,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void createCategory() {
+    void createCategoryTest() {
         BDDMockito.given(categoryRepository.saveAll(Mockito.any(Publisher.class)))
                 .willReturn(Flux.just(CATEGORY_1));
 
@@ -87,13 +87,13 @@ class CategoryControllerTest {
     }
 
     @Test
-    void updateCategory() {
+    void updateCategoryTest() {
 
-        CATEGORY_1.setId(ID_1);
-        CATEGORY_1.setDescription("Updated category 1");
+        CATEGORY_2.setId(ID_1);
+        CATEGORY_2.setDescription("Updated category 1");
 
         BDDMockito.given(categoryRepository.save(Mockito.any(Category.class)))
-                .willReturn(Mono.just(CATEGORY_1));
+                .willReturn(Mono.just(CATEGORY_2));
 
         var catToUpdateMono = Mono.just(Category
                 .builder()

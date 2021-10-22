@@ -42,7 +42,7 @@ class VendorControllerTest {
     }
 
     @Test
-    void getVendors() {
+    void getVendorsTest() {
         BDDMockito.given(vendorRepository.findAll())
                 .willReturn(Flux.just(VENDOR_1, VENDOR_2));
 
@@ -53,7 +53,7 @@ class VendorControllerTest {
     }
 
     @Test
-    void getVendorById() {
+    void getVendorByIdTest() {
 
         VENDOR_1.setId(ID_1);
         BDDMockito.given(vendorRepository.findById(ID_1))
@@ -70,7 +70,7 @@ class VendorControllerTest {
     }
 
     @Test
-    void createVendor() {
+    void createVendorTest() {
         BDDMockito.given(vendorRepository.saveAll(Mockito.any(Publisher.class)))
                 .willReturn(Flux.just(VENDOR_1));
 
@@ -82,5 +82,29 @@ class VendorControllerTest {
                 .exchange()
                 .expectStatus()
                 .isCreated();
+    }
+
+    @Test
+    void updateCategoryTest() {
+
+        VENDOR_1.setId(ID_1);
+        VENDOR_1.setFirstName("Updated vendor 1");
+
+        BDDMockito.given(vendorRepository.save(Mockito.any(Vendor.class)))
+                .willReturn(Mono.just(VENDOR_1));
+
+        var vendorToUpdateMono = Mono.just(Vendor
+                .builder()
+                .firstName("Updated vendor 1")
+                .build());
+
+        webTestClient.put()
+                .uri(VENDORS_API_URL + ID_1)
+                .body(vendorToUpdateMono, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Vendor.class)
+                .value(vendor -> assertEquals("Updated vendor 1", vendor.getFirstName()));
     }
 }
