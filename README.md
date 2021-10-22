@@ -1,6 +1,9 @@
-# Template-Repository
+# SpringBoot webflux reactive api
 
-One Paragraph of project description goes here
+This project is part of learning path of spring webflux reactive learning and practice.
+The the project uses mongodb as a database, and mongo express to manage the database. 
+The mongodb server and mongo express run in a docker container, and there's no need to install it locally. 
+Code quality is checked in Codacy, and the build is done in Circleci.
 
 ### Build Status
 
@@ -13,11 +16,17 @@ One Paragraph of project description goes here
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+- Clone the project
+- 
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+- Jetbrains Intellij pro or your prefered IDE
+- Docker
+- Azul Zulu JDK 11
+- If you use sdkman, and .sdkrc file is already in the root of the project, and will set your jdk to the necessary version
+- In windows use scoop and chocolatey to manage jdk's
+- WSL2 will also work, although the project must be put inside of the wsl drive
 
 ```
 Give examples
