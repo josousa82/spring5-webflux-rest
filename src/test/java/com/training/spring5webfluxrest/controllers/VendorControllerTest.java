@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -19,6 +18,8 @@ import reactor.core.publisher.Mono;
 
 import static com.training.spring5webfluxrest.bootstrap.DataInitializerHelper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 
 
 @ExtendWith(SpringExtension.class)
@@ -71,7 +72,7 @@ class VendorControllerTest {
 
     @Test
     void createVendorTest() {
-        BDDMockito.given(vendorRepository.saveAll(Mockito.any(Publisher.class)))
+        BDDMockito.given(vendorRepository.saveAll(any(Publisher.class)))
                 .willReturn(Flux.just(VENDOR_1));
 
         Mono<Vendor> vendorMono = Mono.just(VENDOR_1);
@@ -85,12 +86,12 @@ class VendorControllerTest {
     }
 
     @Test
-    void updateCategoryTest() {
+    void updateVendorTest() {
 
         VENDOR_1.setId(ID_1);
         VENDOR_1.setFirstName("Updated vendor 1");
 
-        BDDMockito.given(vendorRepository.save(Mockito.any(Vendor.class)))
+        BDDMockito.given(vendorRepository.save(any(Vendor.class)))
                 .willReturn(Mono.just(VENDOR_1));
 
         var vendorToUpdateMono = Mono.just(Vendor
@@ -106,5 +107,53 @@ class VendorControllerTest {
                 .isOk()
                 .expectBody(Vendor.class)
                 .value(vendor -> assertEquals("Updated vendor 1", vendor.getFirstName()));
+    }
+
+    @Test
+    void patchVendorTest() {
+
+        VENDOR_3.setId(ID_1);
+
+        BDDMockito.given(vendorRepository.findById(any(String.class)))
+                .willReturn(Mono.just(VENDOR_3));
+
+        BDDMockito.given(vendorRepository.save(any(Vendor.class)))
+                .willReturn(Mono.just(VENDOR_3));
+
+        var vendorToUpdateMono = Mono.just(
+                Vendor.builder()
+                .firstName("Updated vendor 3").build());
+
+        webTestClient.patch()
+                .uri(VENDORS_API_URL + ID_1)
+                .body(vendorToUpdateMono, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Vendor.class)
+                .value(vendor -> assertEquals("Updated vendor 3", vendor.getFirstName()));
+
+        BDDMockito.verify(vendorRepository).save(any());
+    }
+
+    @Test
+    void patchVendorNoChangesTest() {
+
+        BDDMockito.given(vendorRepository.findById(any(String.class)))
+                .willReturn(Mono.just(VENDOR_4));
+
+        BDDMockito.given(vendorRepository.save(any(Vendor.class)))
+                .willReturn(Mono.just(VENDOR_4));
+
+        var vendorToUpdateMono = Mono.just(VENDOR_4);
+
+        webTestClient.patch()
+                .uri(VENDORS_API_URL + ID_1)
+                .body(vendorToUpdateMono, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        BDDMockito.verify(vendorRepository, never()).save(any());
     }
 }

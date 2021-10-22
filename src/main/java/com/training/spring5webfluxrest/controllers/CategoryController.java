@@ -45,4 +45,21 @@ public class CategoryController {
     public Mono<Category> updateCategory(@PathVariable String id, @RequestBody Category categoryStream){
         return categoryRepository.save(categoryStream);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(CATEGORIES_API_URL + "/{id}")
+    public Mono<Category> pathCategory(@PathVariable String id, @RequestBody Category category){
+        var categoryFound = categoryRepository.findById(id).block();
+
+        //TODO fix method, move logic to service, wrap in try catch, deal with null exceptions
+
+        if (categoryFound != null) {
+            if(categoryFound.getDescription().equals(category.getDescription())) {
+                categoryFound.setDescription(category.getDescription());
+            }
+            return categoryRepository.save(categoryFound);
+        }
+
+        return Mono.just(categoryFound);
+    }
 }

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -19,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import static com.training.spring5webfluxrest.bootstrap.DataInitializerHelper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = {CategoryController.class})
@@ -73,7 +73,7 @@ class CategoryControllerTest {
 
     @Test
     void createCategoryTest() {
-        BDDMockito.given(categoryRepository.saveAll(Mockito.any(Publisher.class)))
+        BDDMockito.given(categoryRepository.saveAll(any(Publisher.class)))
                 .willReturn(Flux.just(CATEGORY_1));
 
         Mono<Category> categoryMono = Mono.just(CATEGORY_1);
@@ -90,14 +90,14 @@ class CategoryControllerTest {
     void updateCategoryTest() {
 
         CATEGORY_2.setId(ID_1);
-        CATEGORY_2.setDescription("Updated category 1");
+        CATEGORY_2.setDescription("Updated category 2");
 
-        BDDMockito.given(categoryRepository.save(Mockito.any(Category.class)))
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
                 .willReturn(Mono.just(CATEGORY_2));
 
         var catToUpdateMono = Mono.just(Category
                 .builder()
-                .description("Updated category 1")
+                .description("Updated category 2")
                 .build());
 
         webTestClient.put()
@@ -107,6 +107,33 @@ class CategoryControllerTest {
                 .expectStatus()
                 .isOk()
                 .expectBody(Category.class)
-                .value(category -> assertEquals("Updated category 1", category.getDescription()));
+                .value(category -> assertEquals("Updated category 2", category.getDescription()));
+    }
+
+    @Test
+    void pathCategoryTest() {
+
+        CATEGORY_3.setId(ID_1);
+        CATEGORY_4.setDescription("Updated category 4");
+
+        BDDMockito.given(categoryRepository.findById(any(String.class)))
+                .willReturn(Mono.just(CATEGORY_4));
+
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(CATEGORY_4));
+
+        var catToUpdateMono = Mono.just(Category
+                .builder()
+                .description("Updated category 4")
+                .build());
+
+        webTestClient.patch()
+                .uri(CATEGORY_API_URL + ID_1)
+                .body(catToUpdateMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Category.class)
+                .value(category -> assertEquals("Updated category 4", category.getDescription()));
     }
 }

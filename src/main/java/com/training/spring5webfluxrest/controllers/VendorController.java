@@ -45,4 +45,22 @@ public class VendorController {
         return vendorRepository.save(vendor);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(VENDORS_API_URL + "/{id}")
+    public Mono<Vendor> pathVendor(@PathVariable String id, @RequestBody Vendor vendor){
+        var vendorFound = vendorRepository.findById(id).block();
+
+        //TODO fix method, move logic to service, wrap in try catch, deal with null exceptions
+        // logic is updating all fields, correct, patch should update only fields that change
+        // write generic method or use library, implement in the service
+
+        if(!vendorFound.getFirstName().equals(vendor.getFirstName())||
+                !vendorFound.getLastName().equals(vendor.getLastName())) {
+
+            vendorFound.setFirstName(vendor.getFirstName());
+            vendorFound.setLastName(vendor.getLastName());
+            return vendorRepository.save(vendorFound);
+        }
+        return Mono.just(vendorFound);
+    }
 }
